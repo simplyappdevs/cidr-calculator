@@ -13,7 +13,6 @@
     "clean": "npm run del ./dist/*",
     "clean:examples": "npm run del ./dist-examples/*",
     "build": "npm run clean && npm run build:common && npm run build:esm",
-    "exec": " node --experimental-modules --es-module-specifier-resolution=node ./dist-examples/examples/index.js",
     "prepublishOnly": "npm run clean && npm run test && npm run build"
   },
   "repository": {

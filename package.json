@@ -1,0 +1,50 @@
+{
+  "name": "@simplyappdevs/cidr-calculator",
+  "version": "0.0.0",
+  "description": "Classless Inter-Domain Routing (CIDR) Notation Calculator",
+  "main": "index.js",
+  "scripts": {
+    "tsc": "tsc",
+    "del": "rimraf",
+    "test": "jest",
+    "build:common": "tsc --project tsconfig.json",
+    "build:esm": "tsc --project tsconfig-esm.json",
+    "build:examples": "npm run clean:examples && tsc --project tsconfig-examples.json",
+    "clean": "npm run del ./dist/*",
+    "clean:examples": "npm run del ./dist-examples/*",
+    "build": "npm run clean && npm run build:common && npm run build:esm",
+    "exec": " node --experimental-modules --es-module-specifier-resolution=node ./dist-examples/examples/index.js",
+    "prepublishOnly": "npm run clean && npm run test && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simplyappdevs/cidr-calculator.git"
+  },
+  "keywords": [
+    "nodejs",
+    "typescript",
+    "bitset",
+    "npm-package",
+    "jest",
+    "ts-jest"
+  ],
+  "author": "SimplyAppDevs",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/simplyappdevs/cidr-calculator/issues"
+  },
+  "homepage": "https://github.com/simplyappdevs/cidr-calculator#readme",
+  "devDependencies": {
+    "@marsraptor/bitset": "^1.0.0",
+    "@types/jest": "^26.0.24",
+    "@types/node": "^16.3.3",
+    "jest": "^27.0.6",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^27.0.3",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "@simplyappdevs/logging-helper": "^1.0.2",
+    "bitset": "^5.1.1"
+  }
+}

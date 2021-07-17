@@ -6,7 +6,7 @@
 
 ## Why?
 
-> Eventhough I am not a network guy but understand these network concepts are fun. So, I wanted a write a CIDR calculator app (Web, Mobile, and Desktop) and figured I started with a shared module that I can use.
+> Eventhough I am not a network guy but understandibg these network concepts are fun. So, I wanted a write a CIDR calculator app (Web, Mobile, and Desktop) and figured I started with a shared module that I can use.
 
 ## Notable Stacks
 
@@ -45,7 +45,7 @@
   "version": "1.0.0",
   "description": "Example for @simplyappdevs/nodejs-prompt NPM package",
   "main": "index.js",
-  "type": "module",  // **Add this line**
+  "type": "module",  // ADD THIS LINE
   "scripts": {
   }
 }
@@ -58,7 +58,7 @@
 ```json
 {
   "compilerOptions": {
-    "module": "esnext",                     /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */
+    "module": "esnext",   // MODIFY THIS LINE
   }
 }
 ```
@@ -68,7 +68,7 @@
 ```json
 {
   "compilerOptions": {
-    "moduleResolution": "node",            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
+    "moduleResolution": "node",   // MODIFY THIS LINE
   }
 }
 ```

@@ -1,6 +1,6 @@
 {
   "name": "@simplyappdevs/cidr-calculator",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Classless Inter-Domain Routing (CIDR) Notation Calculator",
   "main": "index.js",
   "scripts": {

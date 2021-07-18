@@ -2,7 +2,23 @@
   "name": "@simplyappdevs/cidr-calculator",
   "version": "0.0.1",
   "description": "Classless Inter-Domain Routing (CIDR) Notation Calculator",
-  "main": "index.js",
+  "type": "module",
+  "main": "dist/esm/index.js",
+  "module": "dist/esm/index.js",
+  "typings": "dist/esm/index.d.ts",
+  "exports": {
+    "import": "./dist/esm/index.js",
+    "require": "./dist/index.js",
+    "node": "./dist/esm/index.js",
+    "default": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "src",
+    "examples",
+    "README.md",
+    "wrapper.mjs"
+  ],
   "scripts": {
     "tsc": "tsc",
     "del": "rimraf",

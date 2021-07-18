@@ -5,15 +5,11 @@
 /**
  * SimplyAppDevs imports
  */
-import {logger} from '@simplyappdevs/logging-helper';
 
 /**
  * 3rd party imports
  */
 import {default as BitSet} from 'bitset';
-
-// module initializations
-const modLogger = logger.createModuleLogger('APP-CIDR');
 
 // type alias for all
 export type IPTUPPLE = [number, number, number, number];

@@ -42,24 +42,24 @@ function defaultOctects(clone?: OCTECTS): OCTECTS {
       second: clone.second,
       third: clone.third,
       fourth: clone.fourth,
-      add: (num: number) => {return OctectsImpl.add(clone, num);},
-      substract: (num: number) => {return OctectsImpl.substract(clone, num);},
+      add: (num: number) => {return defaultOctects(OctectsImpl.add(clone, num));},
+      substract: (num: number) => {return defaultOctects(OctectsImpl.substract(clone, num));},
       toArray: (): IPTUPPLE => {return clone.toArray();},
       toBinary: (): string => {return clone.toBinary();},
       toString: (): string => {return clone.toString();}
-    };
+    } as OCTECTS;
   } else {
     return {
       first: 0,
       second: 0,
       third: 0,
       fourth: 0,
-      add: (num: number) => {return defaultOctects();},
-      substract: (num: number) => {return defaultOctects();},
+      add: (num: number) => {return defaultOctects(OctectsImpl.add(OCTECTSMIN, num));},
+      substract: (num: number) => {return defaultOctects(OctectsImpl.substract(OCTECTSMIN, num));},
       toArray: (): IPTUPPLE => {return [0, 0, 0, 0];},
       toBinary: (): string => {return '00000000000000000000000000000000';},
       toString: (): string => {return '0.0.0.0'}
-    };
+    } as OCTECTS;
   }
 }
 
@@ -236,11 +236,7 @@ class OctectsImpl implements OCTECTS {
     }
 
     // extract
-    let octString: string[] = OctectsImpl.IPREGEX.exec(ip) || [];
-
-    if (octString.length !== 5) {
-      throw new Error('Invalid IP octects');
-    }
+    let octString: string[] = OctectsImpl.IPREGEX.exec(ip)!;
 
     // remove first item
     octString.splice(0, 1);
@@ -274,7 +270,7 @@ class OctectsImpl implements OCTECTS {
   static numberToOctects(num: number): OCTECTS {
     // validate
     if (num > OctectsImpl.MAXOCTECTSNUM) {
-      throw new Error(`Number ${num} is greater than maximum octects value ${OctectsImpl.MAXOCTECTSNUM}.`);
+      throw new Error(`Number ${num} is greater than maximum octects value ${OctectsImpl.MAXOCTECTSNUM}`);
     }
 
     // AND the number by masks and right shift by the octect bits
@@ -317,17 +313,13 @@ class OctectsImpl implements OCTECTS {
     let endInd = 0;
 
     return OctectsImpl.LENVALS.reduce((acc: string, val: number, ind: number) => {
-      if (fillBinStrLen >= val) {
-        endInd += 8;
+      endInd += 8;
 
-        acc = `${acc}${fullBinString.substring(startInd, endInd)}${seps[ind]}`;
+      acc = `${acc}${fullBinString.substring(startInd, endInd)}${seps[ind]}`;
 
-        startInd = endInd;
+      startInd = endInd;
 
-        return acc;
-      } else {
-        return acc;
-      }
+      return acc;
     }, '');
   }
 
@@ -361,7 +353,7 @@ class OctectsImpl implements OCTECTS {
 
     // validate
     if (octNum > OctectsImpl.MAXOCTECTSNUM) {
-      throw new Error(`Resulting value \'${octNum}\' is greater than maximum octects value \'${OctectsImpl.MAXOCTECTSNUM}\'.`);
+      throw new Error(`Resulting value \'${octNum}\' is greater than maximum octects value \'${OctectsImpl.MAXOCTECTSNUM}\'`);
     }
 
     return new OctectsImpl(OctectsImpl.numberToOctects(octNum));
@@ -397,6 +389,10 @@ class OctectsImpl implements OCTECTS {
     return new OctectsImpl(OctectsImpl.numberToOctects(octNum));
   }
 }
+
+// MAX & MIN octects
+export const OCTECTSMIN = defaultOctects();
+export const OCTECTSMAX = defaultOctects(new OctectsImpl('255.255.255.255'));
 
 /**
  * CIDR information
@@ -809,6 +805,12 @@ export const CIDRModule = {
   },
   octectsFromIPString: (ip: string): OCTECTS => {
     return defaultOctects(OctectsImpl.octectsFromString(ip));
+  },
+  octectsToNumber: (octs: OCTECTS): number => {
+    return OctectsImpl.octectsToNumber(octs);
+  },
+  numberToBinary: (num: number, sep?: string): string => {
+    return OctectsImpl.formatBinary(num, sep);
   },
   addToIP: (ip: IPFORMATS, num: number): OCTECTS => {
     const octs = new OctectsImpl(ip as any);

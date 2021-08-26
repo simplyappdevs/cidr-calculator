@@ -410,33 +410,19 @@ export interface CIDRInformation {
 
 /**
  * Returns default or clone CIDRInformation instance
- * @param clone Optional CIDRInformation to clone from
  * @returns Default CIDRInformation instance
  */
-function defaultCIDRInformation(clone?: CIDRInformation): CIDRInformation {
-  if (clone) {
-    return {
-      networkPrefix: clone.networkPrefix,
-      cidrBlock: clone.cidrBlock,
-      subnetMask: clone.subnetMask,
-      wilcardMask: clone.wilcardMask,
-      broadcastIP: clone.broadcastIP,
-      minIP: clone.minIP,
-      maxIP: clone.maxIP,
-      totalIPs: clone.totalIPs
-    };
-  } else {
-    return {
-      networkPrefix: '0.0.0.0',
-      cidrBlock: 0,
-      subnetMask: '0.0.0.0',
-      wilcardMask: '0.0.0.0',
-      broadcastIP: '0.0.0.0',
-      minIP: '0.0.0.0',
-      maxIP: '0.0.0.0',
-      totalIPs: 0
-    };
-  }
+function defaultCIDRInformation(): CIDRInformation {
+  return {
+    networkPrefix: '0.0.0.0',
+    cidrBlock: 0,
+    subnetMask: '0.0.0.0',
+    wilcardMask: '0.0.0.0',
+    broadcastIP: '0.0.0.0',
+    minIP: '0.0.0.0',
+    maxIP: '0.0.0.0',
+    totalIPs: 0
+  };
 }
 
 /**
@@ -465,7 +451,7 @@ function defaultCIDR(clone?: CIDR): CIDR {
       ipOctects: defaultOctects(clone.ipOctects),
       cidrInformation: clone.cidrInformation,
       maxSubnetCount: clone.maxSubnetCount,
-      calculateCIDR: (cidr: number): CIDRInformation => {return clone.cidrInformation;},
+      calculateCIDR: (cidr: number): CIDRInformation => {return clone.calculateCIDR(cidr);},
       splitCIDR: (subnetCount: number): CIDRInformation[] => {return clone.splitCIDR(subnetCount);}
     };
   } else {
@@ -540,7 +526,7 @@ class CIDRImpl implements CIDR {
           throw new Error(`\'${cidr}\' is an invalid CIDR block value`);
         }
 
-        this._inputCIDR = isNaN(cidrNum) ? 0 : cidrNum;
+        this._inputCIDR = cidrNum;
       } else {
         this._inputCIDR = cidr;
       }
@@ -617,12 +603,8 @@ class CIDRImpl implements CIDR {
       throw new Error(`CIDR block value must be between 1 and 32`);
     }
 
-    if (this._inputIP === '0.0.0.0') {
-      throw new Error(`Cannot calculate CIDR for \'${this.inputIP}\'`);
-    }
-
     if (this._octects.first === 0) {
-      throw new Error(`Invalid IP \'${this.inputIP}\'`);
+      throw new Error(`Cannot calculate CIDR for \'${this.inputIP}\'`);
     }
 
     // IP consists of 4x 8bits octects

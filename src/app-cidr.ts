@@ -436,6 +436,7 @@ export interface CIDR {
   readonly maxSubnetCount: number;
   calculateCIDR: (cidr: number) => CIDRInformation;
   splitCIDR: (subnetCount: number) => CIDRInformation[];
+  toString: () => string;
 }
 
 /**
@@ -443,28 +444,17 @@ export interface CIDR {
  * @param clone CIDR instance to clone from
  * @returns Default CIDR instance
  */
-function defaultCIDR(clone?: CIDR): CIDR {
-  if (clone) {
-    return {
-      inputIP: clone.inputIP,
-      inputCIDR: clone.inputCIDR,
-      ipOctects: defaultOctects(clone.ipOctects),
-      cidrInformation: clone.cidrInformation,
-      maxSubnetCount: clone.maxSubnetCount,
-      calculateCIDR: (cidr: number): CIDRInformation => {return clone.calculateCIDR(cidr);},
-      splitCIDR: (subnetCount: number): CIDRInformation[] => {return clone.splitCIDR(subnetCount);}
-    };
-  } else {
-    return {
-      inputIP: '',
-      inputCIDR: 0,
-      ipOctects: new OctectsImpl(),
-      cidrInformation: defaultCIDRInformation(),
-      maxSubnetCount: 0,
-      calculateCIDR: (cidr: number): CIDRInformation => {return defaultCIDRInformation();},
-      splitCIDR: (subnetCount: number): CIDRInformation[] => {return [];}
-    };
-  }
+function defaultCIDR(clone: CIDR): CIDR {
+  return {
+    inputIP: clone.inputIP,
+    inputCIDR: clone.inputCIDR,
+    ipOctects: defaultOctects(clone.ipOctects),
+    cidrInformation: clone.cidrInformation,
+    maxSubnetCount: clone.maxSubnetCount,
+    calculateCIDR: (cidr: number): CIDRInformation => {return clone.calculateCIDR(cidr);},
+    splitCIDR: (subnetCount: number): CIDRInformation[] => {return clone.splitCIDR(subnetCount);},
+    toString: (): string => {return clone.toString();}
+  };
 }
 
 /**

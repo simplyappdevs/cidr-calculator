@@ -83,6 +83,28 @@ const cidrinfo04: CIDRInformation = {
   totalIPs: 1
 };
 
+const splitcidr01: CIDRInformation = {
+  networkPrefix: '74.125.227.24',
+  cidrBlock: 30,
+  subnetMask: '255.255.255.252',
+  wilcardMask: '0.0.0.3',
+  broadcastIP: '74.125.227.27',
+  minIP: '74.125.227.24',
+  maxIP: '74.125.227.27',
+  totalIPs: 4
+};
+
+const splitcidr02: CIDRInformation = {
+  networkPrefix: '74.125.227.28',
+  cidrBlock: 30,
+  subnetMask: '255.255.255.252',
+  wilcardMask: '0.0.0.3',
+  broadcastIP: '74.125.227.31',
+  minIP: '74.125.227.28',
+  maxIP: '74.125.227.31',
+  totalIPs: 4
+};
+
 const cidr01: CIDR = {
   inputIP: '74.125.227.10',
   inputCIDR: 29,
@@ -117,88 +139,196 @@ const cidr03: CIDR = {
  * CIDR Unit Tests
  */
 describe('CIDR UnitTests', () => {
-  test('parseCIDR(string, string)', () => {
-    const cidrInfo = CIDRModule.parseCIDR('74.125.227.10', '29');
+  describe('parseCIDR() UniteTests', () => {
+    test('parseCIDR(string, string)', () => {
+      const cidrInfo = CIDRModule.parseCIDR('74.125.227.10', '29');
 
-    expect(cidrInfo).toBeDefined();
-    expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr01));
+      expect(cidrInfo).toBeDefined();
+      expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr01));
+      expect(cidrInfo.toString()).toEqual('74.125.227.10/29');
+    });
+
+    test('parseCIDR(string, number)', () => {
+      const cidrInfo = CIDRModule.parseCIDR('74.125.227.10', 29);
+
+      expect(cidrInfo).toBeDefined();
+      expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr01));
+    });
+
+    test('parseCIDR(OCTECTS, number)', () => {
+      const cidrInfo = CIDRModule.parseCIDR(oct2, 29);
+
+      expect(cidrInfo).toBeDefined();
+      expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr02));
+    });
+
+    test('parseCIDR(number, number)', () => {
+      const cidrInfo = CIDRModule.parseCIDR(1249764125, 29);
+
+      expect(cidrInfo).toBeDefined();
+      expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr02));
+    });
+
+    test('parseCIDR()', () => {
+      const cidrInfo = CIDRModule.parseCIDR();
+
+      expect(cidrInfo).toBeDefined();
+      expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr03));
+    });
+
+    test('parseCIDR(A)', () => {
+      expect(() => {
+        const cidrInfo = CIDRModule.parseCIDR('121.32.25.253', 'A');
+      }).toThrowError(`\'A\' is an invalid CIDR block value`);
+    });
+
+    test('parseCIDR(0.0.0.0, 29)', () => {
+      expect(() => {
+        const cidrInfo = CIDRModule.parseCIDR('121.32.25.253', 0);
+      }).toThrowError(`Must specify CIDR block value for IP \'121.32.25.253\'`);
+    });
   });
 
-  test('parseCIDR(string, number)', () => {
-    const cidrInfo = CIDRModule.parseCIDR('74.125.227.10', 29);
+  describe('calculateCIDR() UnitTests', () => {
+    test('calculateCIDR() on 0.0.0.0', () => {
+      const cidrInfo = CIDRModule.parseCIDR();
 
-    expect(cidrInfo).toBeDefined();
-    expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr01));
+      expect(cidrInfo).toBeDefined();
+      expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr03));
+      expect(() => {
+        cidrInfo.calculateCIDR(29);
+      }).toThrowError(`Cannot calculate CIDR for \'0.0.0.0\'`);
+    });
+
+    test('calculateCIDR(0)', () => {
+      const cidrInfo = CIDRModule.parseCIDR();
+
+      expect(cidrInfo).toBeDefined();
+      expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr03));
+      expect(() => {
+        cidrInfo.calculateCIDR(0);
+      }).toThrowError(`CIDR block value must be between 1 and 32`);
+    });
+
+    test('calculateCIDR(33)', () => {
+      const cidrInfo = CIDRModule.parseCIDR();
+
+      expect(cidrInfo).toBeDefined();
+      expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr03));
+      expect(() => {
+        cidrInfo.calculateCIDR(33);
+      }).toThrowError(`CIDR block value must be between 1 and 32`);
+    });
+
+    test('calculateCIDR(32)', () => {
+      const cidrInfo = CIDRModule.parseCIDR(oct2, 29);
+      const cidrInfo2 = cidrInfo.calculateCIDR(32);
+
+      expect(cidrInfo2).toBeDefined();
+      expect(JSON.stringify(cidrInfo2)).toEqual(JSON.stringify(cidrinfo04));
+    });
   });
 
-  test('parseCIDR(OCTECTS, number)', () => {
-    const cidrInfo = CIDRModule.parseCIDR(oct2, 29);
+  describe('splitCIDR() UnitTests', () => {
+    test('splitCIDR(2)', () => {
+      const cidrInfo = CIDRModule.parseCIDR(oct2, 29);
+      const [split01, split02] = cidrInfo.splitCIDR(2);
 
-    expect(cidrInfo).toBeDefined();
-    expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr02));
+      expect(split01).toBeDefined();
+      expect(JSON.stringify(split01)).toEqual(JSON.stringify(splitcidr01));
+
+      expect(split02).toBeDefined();
+      expect(JSON.stringify(split02)).toEqual(JSON.stringify(splitcidr02));
+    });
+
+    test('splitCIDR(2) on 0.0.0.0', () => {
+      const cidrInfo = CIDRModule.parseCIDR();
+
+      expect(cidrInfo).toBeDefined();
+      expect(() => {
+        cidrInfo.splitCIDR(2);
+      }).toThrowError('Cannot split CIDR because it has not been defined.');
+    });
+
+    test('splitCIDR(1)', () => {
+      const cidrInfo = CIDRModule.parseCIDR(oct2, 29);
+
+      expect(cidrInfo).toBeDefined();
+
+      const [split01, split02] = cidrInfo.splitCIDR(1);
+
+      expect(split01).toBeDefined();
+      expect(split02).not.toBeDefined();
+      expect(JSON.stringify(split01)).toEqual(JSON.stringify(cidrinfo02));
+    });
+
+    test('splitCIDR(2) on 74.125.227.29/32', () => {
+      const cidrInfo = CIDRModule.parseCIDR('74.125.227.29', 32);
+
+      expect(cidrInfo).toBeDefined();
+
+      const [split01, split02] = cidrInfo.splitCIDR(2);
+
+      expect(split01).not.toBeDefined();
+      expect(split02).not.toBeDefined();
+    });
+
+    test('splitCIDR(max+1)', () => {
+      const cidrInfo = CIDRModule.parseCIDR(oct2, 29);
+
+      expect(cidrInfo).toBeDefined();
+      expect(() => {
+        const [split01, split02] = cidrInfo.splitCIDR(cidrInfo.maxSubnetCount + 1);
+      }).toThrowError(`CIDR can only be split into maximum of \'${cidrInfo.maxSubnetCount}\' subnets.`);
+    });
   });
 
-  test('parseCIDR(number, number)', () => {
-    const cidrInfo = CIDRModule.parseCIDR(1249764125, 29);
+  describe('cidrBlockFromSubnetMask()', () => {
+    test('cidrBlockFromSubnetMask(255.255.255.248)', () => {
+      const cidr = CIDRModule.cidrFromSubnetMask('255.255.255.248');
 
-    expect(cidrInfo).toBeDefined();
-    expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr02));
+      expect(cidr).toEqual(29);
+    });
+
+    test('cidrBlockFromSubnetMask(0.0.0.0)', () => {
+      expect(() => {
+        const cidr = CIDRModule.cidrFromSubnetMask('0.0.0.0');
+      }).toThrowError(`\'0.0.0.0\' is not a valid subnet mask value`)
+    });
+
+    test('cidrBlockFromSubnetMask(252.255.255.248)', () => {
+      expect(() => {
+        const cidr = CIDRModule.cidrFromSubnetMask('252.255.255.248');
+      }).toThrowError(`\'252.255.255.248\' is not a valid subnet mask format`);
+    });
+
+    test('cidrBlockFromSubnetMask(255.255.255.255)', () => {
+      const cidr = CIDRModule.cidrFromSubnetMask('255.255.255.255');
+
+      expect(cidr).toEqual(32);
+    });
   });
 
-  test('parseCIDR()', () => {
-    const cidrInfo = CIDRModule.parseCIDR();
+  describe('octectsFromIPString() UnitTests', () => {
+    test('octectsFromIPString(74.125.227.10)', () => {
+      const oct = CIDRModule.octectsFromIPString('74.125.227.10');
 
-    expect(cidrInfo).toBeDefined();
-    expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr03));
+      expect(oct).toBeDefined();
+      expect(JSON.stringify(oct)).toEqual(JSON.stringify(oct1));
+    });
   });
 
-  test('parseCIDR(A)', () => {
-    expect(() => {
-      const cidrInfo = CIDRModule.parseCIDR('121.32.25.253', 'A');
-    }).toThrowError(`\'A\' is an invalid CIDR block value`);
-  });
+  describe('numberToBinary() UnitTests', () => {
+    test('numberToBinary(2902675771)', () => {
+      const octects = CIDRModule.numberToBinary(2902675771);
 
-  test('parseCIDR(0.0.0.0, 29)', () => {
-    expect(() => {
-      const cidrInfo = CIDRModule.parseCIDR('121.32.25.253', 0);
-    }).toThrowError(`Must specify CIDR block value for IP \'121.32.25.253\'`);
-  });
+      expect(octects).toEqual('10101101000000110101000100111011');
+    });
 
-  test('calculateCIDR() on 0.0.0.0', () => {
-    const cidrInfo = CIDRModule.parseCIDR();
+    test('numberToBinary(2902675771, \' . \')', () => {
+      const octects = CIDRModule.numberToBinary(2902675771, ' . ');
 
-    expect(cidrInfo).toBeDefined();
-    expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr03));
-    expect(() => {
-      cidrInfo.calculateCIDR(29);
-    }).toThrowError(`Cannot calculate CIDR for \'0.0.0.0\'`);
-  });
-
-  test('calculateCIDR(0)', () => {
-    const cidrInfo = CIDRModule.parseCIDR();
-
-    expect(cidrInfo).toBeDefined();
-    expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr03));
-    expect(() => {
-      cidrInfo.calculateCIDR(0);
-    }).toThrowError(`CIDR block value must be between 1 and 32`);
-  });
-
-  test('calculateCIDR(33)', () => {
-    const cidrInfo = CIDRModule.parseCIDR();
-
-    expect(cidrInfo).toBeDefined();
-    expect(JSON.stringify(cidrInfo)).toEqual(JSON.stringify(cidr03));
-    expect(() => {
-      cidrInfo.calculateCIDR(33);
-    }).toThrowError(`CIDR block value must be between 1 and 32`);
-  });
-
-  test('calculateCIDR(32)', () => {
-    const cidrInfo = CIDRModule.parseCIDR(oct2, 29);
-    const cidrInfo2 = cidrInfo.calculateCIDR(32);
-
-    expect(cidrInfo2).toBeDefined();
-    expect(JSON.stringify(cidrInfo2)).toEqual(JSON.stringify(cidrinfo04));
+      expect(octects).toEqual('10101101 . 00000011 . 01010001 . 00111011');
+    });
   });
 });

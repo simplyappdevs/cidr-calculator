@@ -21,23 +21,27 @@
 ## Manual Build
 
 * Clone repo: `git clone https://github.com/simplyappdevs/cidr-calculator.git`
+* CWD: `cd cidr-calculator`
 * Install deps: `npm i`
 * Clear existing output: `npm run clean`
 * Build module: `npm run build`
 * Test: `npm test`
-* Run example: `npm run exec`
 
-## Configure your application for ESM
+## Example
 
-> This module has been configured as ES module (ESM). You will need to run your application with `--es-module-specifier-resolution=node` option.
+> Examples on how to use this module is available from [https://github.com/simplyappdevs/cidr-calculator-example](https://github.com/simplyappdevs/cidr-calculator-example)
+
+## Reminder for ESM Application
+
+### npm exec command option
+
+> You will need to run your application with `--es-module-specifier-resolution=node` option.
 >
 > Ex: `"exec": "node --es-module-specifier-resolution=node ./dist/index.js"` for your NPM script `npm run exec`.
->
-> In addition, set the followings:
 
-## package.json
+### Configure package.json
 
-> Set type to module
+> Set type to module `"type": "module"`
 
 ```json
 {
@@ -45,30 +49,30 @@
   "version": "1.0.0",
   "description": "Example for @simplyappdevs/nodejs-prompt NPM package",
   "main": "index.js",
-  "type": "module",  // ADD THIS LINE
+  "type": "module",
   "scripts": {
   }
 }
 ```
 
-## tsconfig.json
+### Configure tsconfig.json
 
-> Set module to one of ECMA script
+> Set module to one of ECMA script `"module": "esnext"` in `compilerOptions` section
 
 ```json
 {
   "compilerOptions": {
-    "module": "esnext",   // MODIFY THIS LINE
+    "module": "esnext",
   }
 }
 ```
 
-> Set module resolution to `node`
+> Set module resolution to node `"moduleResolution": "node"` in `compilerOptions` section
 
 ```json
 {
   "compilerOptions": {
-    "moduleResolution": "node",   // MODIFY THIS LINE
+    "moduleResolution": "node",
   }
 }
 ```

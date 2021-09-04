@@ -47,7 +47,7 @@
 {
   "name": "nodejs-prompt-example",
   "version": "1.0.0",
-  "description": "Example for @simplyappdevs/nodejs-prompt NPM package",
+  "description": "My Awesome App",
   "main": "index.js",
   "type": "module",
   "scripts": {

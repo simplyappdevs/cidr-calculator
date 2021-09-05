@@ -6,7 +6,7 @@
 
 ## Why?
 
-> Eventhough I am not a network guy but understandibg these network concepts are fun. So, I wanted a write a CIDR calculator app (Web, Mobile, and Desktop) and figured I started with a shared module that I can use.
+> Eventhough I am not a network guy but understandinbg these network concepts are fun. I wanted to develop a CIDR calculator app (Web, Mobile, and Desktop) and this is the start.
 
 ## Notable Stacks
 
